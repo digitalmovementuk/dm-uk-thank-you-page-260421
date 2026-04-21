@@ -7,7 +7,6 @@ import {
   useMotionValue,
   useReducedMotion,
   useScroll,
-  useSpring,
   useTransform,
 } from 'framer-motion';
 import {
@@ -520,29 +519,35 @@ function CaseStudiesSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [layoutMetrics, setLayoutMetrics] = useState({
     slideStep: 0,
-    holdDistance: 220,
+    entryHoldDistance: 160,
+    exitHoldDistance: 220,
     sectionHeight: 1320,
   });
   const [lockState, setLockState] = useState('before');
   const sectionProgress = useMotionValue(0);
-  const smoothProgress = useSpring(sectionProgress, {
-    stiffness: shouldReduceMotion ? 1000 : 130,
-    damping: shouldReduceMotion ? 100 : 28,
-    mass: 0.26,
-  });
   const maxTranslate = layoutMetrics.slideStep * (CASE_STUDIES.length - 1);
-  const travelDistance = maxTranslate + layoutMetrics.holdDistance;
-  const travelCutoff = maxTranslate > 0 && travelDistance > 0 ? maxTranslate / travelDistance : 1;
-  const carouselProgress = useTransform(smoothProgress, (latest) => {
+  const scrollSpan =
+    layoutMetrics.entryHoldDistance + maxTranslate + layoutMetrics.exitHoldDistance;
+  const slideStartRatio =
+    maxTranslate > 0 && scrollSpan > 0 ? layoutMetrics.entryHoldDistance / scrollSpan : 0;
+  const slideEndRatio =
+    maxTranslate > 0 && scrollSpan > 0
+      ? (layoutMetrics.entryHoldDistance + maxTranslate) / scrollSpan
+      : 1;
+  const carouselProgress = useTransform(sectionProgress, (latest) => {
     if (maxTranslate <= 0) {
       return 0;
     }
 
-    if (latest >= travelCutoff) {
+    if (latest <= slideStartRatio) {
+      return 0;
+    }
+
+    if (latest >= slideEndRatio) {
       return 1;
     }
 
-    return latest / Math.max(travelCutoff, 0.0001);
+    return (latest - slideStartRatio) / Math.max(slideEndRatio - slideStartRatio, 0.0001);
   });
   const sliderX = useTransform(carouselProgress, (latest) => -maxTranslate * latest);
 
@@ -578,22 +583,35 @@ function CaseStudiesSection() {
         ) || 0;
       const viewportHeight = window.innerHeight;
       const stickyHeight = Math.max(360, viewportHeight - headerOffset);
-      const nextHoldDistance = Math.max(180, Math.min(280, stickyHeight * 0.22));
-      const nextSectionHeight = Math.ceil(viewportHeight + nextStep * (CASE_STUDIES.length - 1) + nextHoldDistance);
+      const isCompactViewport = window.innerWidth < 981;
+      const nextEntryHoldDistance = isCompactViewport
+        ? Math.max(300, Math.min(420, stickyHeight * 0.4))
+        : Math.max(220, Math.min(320, stickyHeight * 0.28));
+      const nextExitHoldDistance = isCompactViewport
+        ? Math.max(280, Math.min(420, stickyHeight * 0.38))
+        : Math.max(240, Math.min(360, stickyHeight * 0.3));
+      const nextSectionHeight = Math.ceil(
+        stickyHeight +
+          nextEntryHoldDistance +
+          nextStep * (CASE_STUDIES.length - 1) +
+          nextExitHoldDistance,
+      );
 
       startTransition(() => {
         setLayoutMetrics((current) => {
           const isSameStep = Math.abs(current.slideStep - nextStep) < 1;
-          const isSameHold = Math.abs(current.holdDistance - nextHoldDistance) < 1;
+          const isSameEntryHold = Math.abs(current.entryHoldDistance - nextEntryHoldDistance) < 1;
+          const isSameExitHold = Math.abs(current.exitHoldDistance - nextExitHoldDistance) < 1;
           const isSameHeight = Math.abs(current.sectionHeight - nextSectionHeight) < 2;
 
-          if (isSameStep && isSameHold && isSameHeight) {
+          if (isSameStep && isSameEntryHold && isSameExitHold && isSameHeight) {
             return current;
           }
 
           return {
             slideStep: nextStep,
-            holdDistance: nextHoldDistance,
+            entryHoldDistance: nextEntryHoldDistance,
+            exitHoldDistance: nextExitHoldDistance,
             sectionHeight: nextSectionHeight,
           };
         });
@@ -692,9 +710,9 @@ function CaseStudiesSection() {
 
       if (latest >= 0.995) {
         nextState = 'after';
-      } else if (latest > travelCutoff && maxTranslate > 0) {
+      } else if (latest >= slideEndRatio && maxTranslate > 0) {
         nextState = 'hold';
-      } else if (latest > 0.015) {
+      } else if (latest > slideStartRatio + 0.001) {
         nextState = 'sliding';
       }
 
@@ -713,7 +731,7 @@ function CaseStudiesSection() {
       unsubscribeProgress();
       unsubscribeSection();
     };
-  }, [carouselProgress, maxTranslate, sectionProgress, shouldReduceMotion, travelCutoff]);
+  }, [carouselProgress, maxTranslate, sectionProgress, shouldReduceMotion, slideEndRatio, slideStartRatio]);
 
   if (shouldReduceMotion) {
     return <StaticCaseStudiesSection />;

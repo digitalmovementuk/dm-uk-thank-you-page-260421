@@ -8,11 +8,23 @@ function getLockMetrics() {
   const section = document.querySelector('#case-studies');
   const sticky = document.querySelector('.case-study-lock__sticky');
   const nextSection = document.querySelector('#next-steps');
+  const viewport = document.querySelector('.case-study-slider');
+  const slides = document.querySelectorAll('.case-study-slider__slide');
   const activeDot = document.querySelectorAll('.case-study-lock__dot');
   const activeIndex = [...activeDot].findIndex((dot) => dot.classList.contains('is-active'));
   const rect = section?.getBoundingClientRect();
   const stickyRect = sticky?.getBoundingClientRect();
   const nextRect = nextSection?.getBoundingClientRect();
+  const viewportRect = viewport?.getBoundingClientRect();
+  const viewportStyle = viewport ? getComputedStyle(viewport) : null;
+  const focusLeft = viewportRect
+    ? viewportRect.left + parseFloat(viewportStyle?.paddingLeft || '0')
+    : null;
+  const focusRight = viewportRect
+    ? viewportRect.right - parseFloat(viewportStyle?.paddingRight || '0')
+    : null;
+  const firstRect = slides[0]?.getBoundingClientRect();
+  const lastRect = slides[slides.length - 1]?.getBoundingClientRect();
   const headerHeight =
     parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 0;
 
@@ -27,6 +39,12 @@ function getLockMetrics() {
     nextTop: nextRect?.top ?? null,
     viewportHeight: window.innerHeight,
     headerHeight,
+    focusLeft,
+    focusRight,
+    firstLeft: firstRect?.left ?? null,
+    firstRight: firstRect?.right ?? null,
+    lastLeft: lastRect?.left ?? null,
+    lastRight: lastRect?.right ?? null,
   };
 }
 
@@ -104,6 +122,38 @@ function isPinnedBelowHeader(metrics) {
   );
 }
 
+function isLastSlideFullyAligned(metrics) {
+  if (
+    typeof metrics.focusLeft !== 'number' ||
+    typeof metrics.focusRight !== 'number' ||
+    typeof metrics.lastLeft !== 'number' ||
+    typeof metrics.lastRight !== 'number'
+  ) {
+    return false;
+  }
+
+  return (
+    Math.abs(metrics.lastLeft - metrics.focusLeft) <= 2 &&
+    Math.abs(metrics.lastRight - metrics.focusRight) <= 2
+  );
+}
+
+function isFirstSlideFullyAligned(metrics) {
+  if (
+    typeof metrics.focusLeft !== 'number' ||
+    typeof metrics.focusRight !== 'number' ||
+    typeof metrics.firstLeft !== 'number' ||
+    typeof metrics.firstRight !== 'number'
+  ) {
+    return false;
+  }
+
+  return (
+    Math.abs(metrics.firstLeft - metrics.focusLeft) <= 2 &&
+    Math.abs(metrics.firstRight - metrics.focusRight) <= 2
+  );
+}
+
 async function positionBeforeCaseStudies(page, offset) {
   await page.waitForSelector('#case-studies');
   await page.evaluate((scrollOffset) => {
@@ -156,8 +206,11 @@ test.describe('Case study lock', () => {
     const reachedFinalCard = await repeatUntil(
       page,
       () => humanWheel(page, [220]),
-      () => readLockMetrics(page).then((m) => m.activeIndex === 2),
-      8,
+      () =>
+        readLockMetrics(page).then(
+          (m) => m.activeIndex === 2 && isLastSlideFullyAligned(m) && isPinnedBelowHeader(m),
+        ),
+      12,
     );
     expect(reachedFinalCard).toBe(true);
 
@@ -190,8 +243,11 @@ test.describe('Case study lock', () => {
     const movedBackThroughCards = await repeatUntil(
       page,
       () => humanWheel(page, [-220]),
-      () => readLockMetrics(page).then((m) => m.activeIndex <= 1),
-      8,
+      () =>
+        readLockMetrics(page).then(
+          (m) => m.activeIndex === 0 && isFirstSlideFullyAligned(m) && isPinnedBelowHeader(m),
+        ),
+      12,
     );
     expect(movedBackThroughCards).toBe(true);
 
@@ -240,8 +296,11 @@ test.describe('Case study lock', () => {
       const reachedFinalCard = await repeatUntil(
         page,
         () => swipe(page, { startX: 195, startY: 700, endX: 195, endY: 430 }),
-        () => readLockMetrics(page).then((m) => m.activeIndex === 2),
-        8,
+        () =>
+          readLockMetrics(page).then(
+            (m) => m.activeIndex === 2 && isLastSlideFullyAligned(m) && isPinnedBelowHeader(m),
+          ),
+        12,
       );
       expect(reachedFinalCard).toBe(true);
 
@@ -274,8 +333,11 @@ test.describe('Case study lock', () => {
       const movedBackThroughCards = await repeatUntil(
         page,
         () => swipe(page, { startX: 195, startY: 280, endX: 195, endY: 660 }),
-        () => readLockMetrics(page).then((m) => m.activeIndex <= 1),
-        8,
+        () =>
+          readLockMetrics(page).then(
+            (m) => m.activeIndex === 0 && isFirstSlideFullyAligned(m) && isPinnedBelowHeader(m),
+          ),
+        12,
       );
       expect(movedBackThroughCards).toBe(true);
 
