@@ -1,0 +1,24 @@
+{
+  "name": "dm-uk-thank-you-page-260421",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Digital Movement UK thank you page 260421 built with React, Vite, and Framer Motion.",
+  "dependencies": {
+    "framer-motion": "^12.38.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.0.1",
+    "vite": "^8.0.8"
+  }
+}

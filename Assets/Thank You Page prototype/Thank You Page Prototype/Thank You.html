@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Thank you — Digital Movement</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <style>
+    :root {
+      --bg-0: #120a1f;
+      --bg-1: #1c1330;
+      --bg-2: #241831;
+      --bg-3: #2a1c3d;
+      --surface: #2a1c3d;
+      --surface-2: #332245;
+      --border: rgba(255,255,255,0.08);
+      --border-strong: rgba(255,255,255,0.16);
+      --text: #ffffff;
+      --text-2: rgba(255,255,255,0.72);
+      --text-3: rgba(255,255,255,0.48);
+      --magenta: #ED1E79;
+      --magenta-2: #F43F8A;
+      --magenta-3: #E8214E;
+      --gold: #F5C24D;
+      --green: #25D366; /* whatsapp */
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--bg-1); color: var(--text); font-family: 'Manrope', ui-sans-serif, system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+    body { font-size: 16px; line-height: 1.55; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    /* Utility */
+    .eyebrow { text-transform: uppercase; letter-spacing: 0.22em; font-size: 11px; font-weight: 700; color: var(--magenta); }
+    .mono-nums { font-variant-numeric: tabular-nums; }
+
+    /* Page gradient */
+    .page {
+      min-height: 100vh;
+      background:
+        radial-gradient(1200px 600px at 80% -10%, rgba(237,30,121,0.18), transparent 60%),
+        radial-gradient(900px 500px at 10% 10%, rgba(99,46,162,0.25), transparent 55%),
+        linear-gradient(180deg, #1c1330 0%, #150d26 40%, #0f0820 100%);
+    }
+
+    /* Header */
+    .nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(18,10,31,0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner { max-width: 1280px; margin: 0 auto; padding: 18px 32px; display: flex; align-items: center; gap: 32px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; letter-spacing: -0.01em; }
+    .logo-mark { width: 34px; height: 34px; border-radius: 8px; background: linear-gradient(135deg,#F43F8A,#E8214E); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; color:#fff; letter-spacing: -0.03em; box-shadow: 0 6px 20px -8px rgba(237,30,121,0.7); }
+    .logo .accent { color: var(--magenta); }
+    .nav-links { display: flex; gap: 28px; margin: 0 auto; font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-2); }
+    .nav-links a { transition: color 150ms; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { background: #fff; color: #1c1330; padding: 10px 22px; border-radius: 999px; font-weight: 700; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; transition: transform 150ms, box-shadow 150ms; }
+    .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 10px 24px -10px rgba(255,255,255,0.4); }
+
+    /* HERO */
+    .hero { padding: 64px 32px 72px; }
+    .hero-inner { max-width: 1100px; margin: 0 auto; text-align: center; position: relative; }
+    .check-halo {
+      width: 96px; height: 96px; border-radius: 50%;
+      background: radial-gradient(circle, var(--magenta-2) 0%, var(--magenta) 60%, rgba(237,30,121,0) 72%);
+      margin: 0 auto 28px;
+      display: grid; place-items: center;
+      position: relative;
+      animation: haloPulse 2.8s ease-out infinite;
+    }
+    .check-halo::before {
+      content: ""; position: absolute; inset: -20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(237,30,121,0.35), transparent 60%);
+      animation: haloWave 2.8s ease-out infinite;
+    }
+    .check-halo svg { position: relative; width: 42px; height: 42px; color: #fff; stroke-width: 3; }
+    @keyframes haloPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+    @keyframes haloWave { 0% { transform: scale(0.9); opacity: 0.8; } 100% { transform: scale(1.35); opacity: 0; } }
+
+    .hero h1 {
+      font-size: clamp(40px, 5.2vw, 72px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.02;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+    .hero h1 .pink { background: linear-gradient(92deg, #F43F8A, #ED1E79 55%, #E8214E); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .hero-sub { font-size: 18px; color: var(--text-2); max-width: 560px; margin: 0 auto 28px; line-height: 1.55; }
+
+    /* live status strip */
+    .status-strip {
+      display: inline-flex; align-items: center; gap: 14px;
+      padding: 10px 18px 10px 14px;
+      border: 1px solid var(--border-strong);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      font-size: 13px; color: var(--text-2);
+    }
+    .status-strip .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--magenta); box-shadow: 0 0 0 0 rgba(237,30,121,0.7); animation: dotPulse 1.6s ease-out infinite; }
+    @keyframes dotPulse { 0% { box-shadow: 0 0 0 0 rgba(237,30,121,0.7); } 70% { box-shadow: 0 0 0 10px rgba(237,30,121,0); } 100% { box-shadow: 0 0 0 0 rgba(237,30,121,0); } }
+    .status-strip .divider { width: 1px; height: 14px; background: var(--border-strong); }
+    .status-strip b { color: var(--text); font-weight: 600; }
+
+    /* MARQUEE / meanwhile band */
+    .meanwhile {
+      margin-top: 56px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(237,30,121,0.04), rgba(237,30,121,0.0));
+      overflow: hidden;
+      position: relative;
+    }
+    .meanwhile-inner { display: flex; align-items: center; padding: 18px 0; gap: 56px; white-space: nowrap; animation: marquee 38s linear infinite; }
+    .meanwhile:hover .meanwhile-inner { animation-play-state: paused; }
+    .meanwhile-item { display: inline-flex; align-items: center; gap: 12px; font-size: 14px; color: var(--text-2); letter-spacing: 0.04em; text-transform: uppercase; font-weight: 600; }
+    .meanwhile-item .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--magenta); }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* Section basics */
+    .section { padding: 96px 32px; }
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+    .section-head { text-align: center; margin-bottom: 56px; }
+    .section-head .eyebrow { display: inline-block; margin-bottom: 14px; }
+    .section-head h2 { font-size: clamp(28px, 3.2vw, 42px); font-weight: 800; letter-spacing: -0.02em; text-transform: uppercase; }
+    .section-head p { margin-top: 14px; color: var(--text-2); max-width: 560px; margin-left: auto; margin-right: auto; }
+
+    /* STEPS */
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .step-card {
+      position: relative;
+      padding: 32px 28px 28px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.015));
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      transition: transform 220ms cubic-bezier(.32,.72,0,1), border-color 220ms, background 220ms;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .step-card::before {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(600px 200px at var(--mx, 50%) 0%, rgba(237,30,121,0.12), transparent 60%);
+      opacity: 0; transition: opacity 220ms;
+      pointer-events: none;
+    }
+    .step-card:hover { transform: translateY(-3px); border-color: var(--border-strong); }
+    .step-card:hover::before { opacity: 1; }
+
+    .step-num {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, #F43F8A, #E8214E);
+      display: grid; place-items: center;
+      color: #fff; font-weight: 800; font-size: 17px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 24px -10px rgba(237,30,121,0.6), inset 0 1px 0 rgba(255,255,255,0.3);
+    }
+    .step-card h3 { font-size: 16px; font-weight: 800; letter-spacing: 0.02em; text-transform: uppercase; margin-bottom: 10px; }
+    .step-card p { font-size: 14px; color: var(--text-2); line-height: 1.6; }
+    .step-meta {
+      margin-top: 22px; padding-top: 16px;
+      border-top: 1px dashed var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12px; color: var(--text-3); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;
+    }
+    .step-meta .eta { color: var(--magenta); }
+    .step-expand {
+      max-height: 0; overflow: hidden;
+      transition: max-height 320ms cubic-bezier(.32,.72,0,1);
+    }
+    .step-card.open .step-expand { max-height: 200px; }
+    .step-expand-inner { padding-top: 14px; font-size: 13px; color: var(--text-2); line-height: 1.6; border-top: 1px solid var(--border); margin-top: 16px; }
+
+    /* TRUST STATS */
+    .trust { background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; margin-bottom: 64px; }
+    .stat { text-align: center; }
+    .stat .num { font-size: clamp(44px, 5vw, 64px); font-weight: 800; letter-spacing: -0.03em; background: linear-gradient(180deg, #F43F8A, #ED1E79); -webkit-background-clip: text; background-clip: text; color: transparent; line-height: 1; }
+    .stat .cap { margin-top: 12px; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-3); font-weight: 700; }
+
+    .testimonial {
+      max-width: 720px; margin: 0 auto;
+      background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015));
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 40px 44px;
+      text-align: center;
+      position: relative;
+    }
+    .stars { color: var(--gold); letter-spacing: 4px; font-size: 18px; margin-bottom: 20px; }
+    .testimonial q { font-size: 17px; line-height: 1.6; color: var(--text); font-style: italic; display: block; margin-bottom: 22px; quotes: "\201C" "\201D"; }
+    .testimonial .who { font-weight: 700; }
+    .testimonial .role { font-size: 12px; color: var(--text-3); margin-top: 4px; letter-spacing: 0.06em; text-transform: uppercase; }
+    .google-chip {
+      display: inline-flex; align-items: center; gap: 10px;
+      margin-top: 20px; padding: 7px 14px;
+      background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+      border-radius: 999px; font-size: 12px; color: var(--text-2);
+    }
+
+    /* DONT WAIT CTA */
+    .cta { background: linear-gradient(180deg, rgba(237,30,121,0.08), rgba(237,30,121,0.03) 60%, transparent); border-top: 1px solid var(--border); }
+    .cta-inner { text-align: center; max-width: 640px; margin: 0 auto; }
+    .cta h2 { font-size: clamp(32px, 4vw, 54px); font-weight: 800; letter-spacing: -0.025em; text-transform: uppercase; margin-bottom: 16px; }
+    .cta p { color: var(--text-2); margin-bottom: 28px; font-size: 17px; }
+    .cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+    .btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px; border-radius: 999px; font-weight: 700; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; transition: transform 150ms, box-shadow 180ms, background 180ms; cursor: pointer; border: 1px solid transparent; }
+    .btn-primary { background: linear-gradient(135deg, #F43F8A, #E8214E); color: #fff; box-shadow: 0 14px 30px -12px rgba(237,30,121,0.7); }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 18px 36px -12px rgba(237,30,121,0.8); }
+    .btn-ghost { background: transparent; border-color: var(--border-strong); color: #fff; }
+    .btn-ghost:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.3); }
+    .btn-whatsapp { background: var(--green); color: #fff; }
+    .btn-whatsapp:hover { background: #1fba5a; transform: translateY(-1px); }
+    .btn svg { width: 16px; height: 16px; }
+
+    /* FOOTER */
+    footer {
+      padding: 40px 32px 32px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--text-3);
+      font-size: 13px;
+    }
+    footer .logo { justify-content: center; margin-bottom: 18px; }
+    footer .addr { margin-bottom: 14px; color: var(--text-2); }
+    footer .fnav { display: flex; gap: 22px; justify-content: center; margin-bottom: 18px; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
+    footer .fnav a:hover { color: var(--text); }
+    footer .copy { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+    /* MODAL */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(10,5,20,0.7); backdrop-filter: blur(8px); z-index: 100; display: grid; place-items: center; padding: 20px; animation: fadeIn 180ms ease-out; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal {
+      background: linear-gradient(180deg, #2a1c3d, #1e132e);
+      border: 1px solid var(--border-strong);
+      border-radius: 18px;
+      width: 100%; max-width: 540px;
+      padding: 32px;
+      animation: popIn 260ms cubic-bezier(.32,.72,0,1);
+    }
+    @keyframes popIn { from { transform: translateY(12px) scale(0.98); opacity: 0; } to { transform: none; opacity: 1; } }
+    .modal-close { position: absolute; top: 18px; right: 18px; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,0.08); }
+    .modal-close:hover { background: rgba(255,255,255,0.16); }
+
+    .slot-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 20px; }
+    .slot { padding: 12px 10px; text-align: center; border: 1px solid var(--border); border-radius: 10px; font-size: 13px; font-weight: 600; transition: all 150ms; }
+    .slot:hover { border-color: var(--magenta); background: rgba(237,30,121,0.08); }
+    .slot.selected { background: linear-gradient(135deg, #F43F8A, #E8214E); border-color: transparent; }
+    .slot:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* TWEAKS panel */
+    .tweaks { position: fixed; bottom: 24px; right: 24px; width: 280px; background: #1a1129; border: 1px solid var(--border-strong); border-radius: 14px; padding: 18px; z-index: 90; box-shadow: 0 30px 60px -20px rgba(0,0,0,0.6); }
+    .tweaks h4 { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--magenta); margin-bottom: 14px; }
+    .tweaks .row { margin-bottom: 14px; }
+    .tweaks label { font-size: 12px; color: var(--text-2); display: block; margin-bottom: 6px; font-weight: 600; }
+    .tweaks input[type="text"], .tweaks select { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; color: #fff; font-size: 12px; font-family: inherit; }
+    .tweaks .seg { display: flex; gap: 6px; }
+    .tweaks .seg button { flex: 1; padding: 7px 0; font-size: 11px; font-weight: 600; border: 1px solid var(--border); border-radius: 6px; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.06em; }
+    .tweaks .seg button.on { background: var(--magenta); color: #fff; border-color: transparent; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .steps { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); gap: 40px 20px; }
+      .section { padding: 64px 24px; }
+      .hero { padding: 48px 24px 56px; }
+      .testimonial { padding: 32px 24px; }
+      .slot-grid { grid-template-columns: repeat(2, 1fr); }
+      .tweaks { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" data-presets="env,react">
+    const { useState, useEffect, useRef } = React;
+
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "heroMode": "bold",
+      "etaHours": 24,
+      "showMarquee": true,
+      "ownerName": "Martey",
+      "whatsappNumber": "+442038157992",
+      "showVideo": true
+    }/*EDITMODE-END*/;
+
+    // ---------- small UI ----------
+    const Icon = ({ name, ...p }) => {
+      const paths = {
+        check: <polyline points="4 12 10 18 20 6" strokeLinecap="round" strokeLinejoin="round"/>,
+        calendar: <><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></>,
+        whatsapp: <path d="M17.5 14.4c-.3-.1-1.6-.8-1.8-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.8 1.1-.2.2-.3.2-.6.1-.3-.1-1.1-.4-2.1-1.3-.8-.7-1.3-1.6-1.5-1.8-.1-.3 0-.4.1-.5.1-.1.3-.3.4-.5.1-.1.2-.2.2-.4.1-.2 0-.3 0-.5 0-.1-.6-1.4-.8-1.9-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-.9.9-.9 2.2 0 1.3.9 2.6 1.1 2.8.1.2 1.9 2.9 4.6 4 2.7 1.1 2.7.7 3.2.7.5-.1 1.6-.6 1.8-1.3.2-.7.2-1.2.2-1.3-.1-.1-.3-.2-.5-.3zM12 2a10 10 0 0 0-8.5 15.3L2 22l4.8-1.3A10 10 0 1 0 12 2z"/>,
+        arrow: <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round"/>,
+        close: <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round"/>,
+        play: <polygon points="7 4 20 12 7 20 7 4"/>,
+        clock: <><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" strokeLinecap="round"/></>,
+        mail: <><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 7 9-7"/></>,
+        sparkle: <path d="M12 3l1.5 5 5 1.5-5 1.5L12 16l-1.5-5-5-1.5 5-1.5zM19 15l.8 2.2 2.2.8-2.2.8L19 21l-.8-2.2-2.2-.8 2.2-.8z"/>,
+      };
+      return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...p}>{paths[name]}</svg>;
+    };
+
+    const Logo = () => (
+      <div className="logo">
+        <div className="logo-mark">DM</div>
+        <span>Digital<span className="accent">Movement</span></span>
+      </div>
+    );
+
+    // ---------- Nav ----------
+    const Nav = () => (
+      <nav className="nav">
+        <div className="nav-inner">
+          <Logo />
+          <div className="nav-links">
+            <a href="#">Home</a>
+            <a href="#">Why Us</a>
+            <a href="#">SEO</a>
+            <a href="#">Google Ads</a>
+            <a href="#">Websites</a>
+            <a href="#">Contact</a>
+          </div>
+          <a href="#" className="nav-cta">Get in touch</a>
+        </div>
+      </nav>
+    );
+
+    // ---------- Hero ----------
+    const Hero = ({ tw, onBook }) => {
+      // "arriving in X:XX" countdown - typical response in ~Y hours from now
+      const [now, setNow] = useState(Date.now());
+      useEffect(() => { const t = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(t); }, []);
+      const responseAt = new Date(); responseAt.setHours(responseAt.getHours() + Math.min(tw.etaHours, 24));
+      const msLeft = Math.max(0, responseAt - now);
+      const hh = String(Math.floor(msLeft / 3600000)).padStart(2,'0');
+      const mm = String(Math.floor((msLeft % 3600000)/60000)).padStart(2,'0');
+      const ss = String(Math.floor((msLeft % 60000)/1000)).padStart(2,'0');
+
+      return (
+        <section className="hero">
+          <div className="hero-inner">
+            <div className="check-halo">
+              <Icon name="check" />
+            </div>
+
+            {tw.heroMode === 'split' ? (
+              <h1>Thank you! <span className="pink">We've got your details</span></h1>
+            ) : (
+              <h1><span className="pink">You're in.</span> Let's grow your business.</h1>
+            )}
+
+            <p className="hero-sub">
+              One of our digital marketing specialists will be in touch within {tw.etaHours} hours. In the meantime, here's what happens next.
+            </p>
+
+            <div className="status-strip">
+              <span className="pulse" />
+              <span>Specialist assigned: <b>{tw.ownerName}</b></span>
+              <span className="divider" />
+              <Icon name="clock" style={{width:14,height:14,color:'var(--magenta)'}} />
+              <span className="mono-nums">Response window <b>{hh}:{mm}:{ss}</b></span>
+            </div>
+          </div>
+        </section>
+      );
+    };
+
+    // ---------- Marquee ----------
+    const Marquee = () => {
+      const items = [
+        "While you wait · watch our 3-min strategy breakdown",
+        "Case study: cosmetic clinic · 1,312% more leads",
+        "Follow @digitalmovement.uk on Instagram",
+        "Free: 2026 Google Ads playbook",
+        "Case study: construction · £28k pipeline in 11 days",
+        "Meet the team on our YouTube channel",
+      ];
+      return (
+        <div className="meanwhile">
+          <div className="meanwhile-inner">
+            {[...items, ...items].map((t, i) => (
+              <span key={i} className="meanwhile-item"><span className="dot" />{t}</span>
+            ))}
+          </div>
+        </div>
+      );
+    };
+
+    // ---------- Steps ----------
+    const STEPS = [
+      {
+        n: 1, t: "We audit your site",
+        p: "Our team reviews your website, current Google rankings, and online presence to identify quick wins and growth opportunities.",
+        more: "Deliverable: a short Loom walkthrough plus a written 1-page audit flagging technical issues, ranking gaps and the 3 highest-leverage fixes.",
+        eta: "Today",
+      },
+      {
+        n: 2, t: "Free strategy call",
+        p: "We walk you through our findings and show you exactly how we'd get your business to page 1 on Google, with a tailored plan.",
+        more: "30 minutes on Google Meet. No slide deck — we screen-share the audit and map out your 30 / 60 / 90-day plan in real time.",
+        eta: "Within 48h",
+      },
+      {
+        n: 3, t: "Results in weeks",
+        p: "Our proven system has gotten businesses ranking on page 1 in as little as 5 days. Real leads, real growth.",
+        more: "Typical first-month milestones: 3 keywords to page 1, tracking + reporting set up, paid campaigns launched and landing pages live.",
+        eta: "From day 5",
+      },
+    ];
+
+    const Steps = () => {
+      const [open, setOpen] = useState(null);
+      const setMouse = (e) => {
+        const r = e.currentTarget.getBoundingClientRect();
+        e.currentTarget.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      };
+      return (
+        <section className="section">
+          <div className="section-inner">
+            <div className="section-head">
+              <span className="eyebrow">The next 72 hours</span>
+              <h2>What happens next?</h2>
+              <p>Three steps. No forms to fill. No surprises. Click a card to see exactly what you'll get.</p>
+            </div>
+            <div className="steps">
+              {STEPS.map((s, i) => (
+                <div key={s.n}
+                     className={"step-card" + (open === i ? " open" : "")}
+                     onMouseMove={setMouse}
+                     onClick={() => setOpen(open === i ? null : i)}>
+                  <div className="step-num">{s.n}</div>
+                  <h3>{s.t}</h3>
+                  <p>{s.p}</p>
+                  <div className="step-expand"><div className="step-expand-inner">{s.more}</div></div>
+                  <div className="step-meta">
+                    <span className="eta">⏱ {s.eta}</span>
+                    <span>{open === i ? "Close —" : "Read more +"}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    };
+
+    // ---------- Count up on stats ----------
+    const useCountUp = (to, dur = 1400, start = false) => {
+      const [v, setV] = useState(0);
+      useEffect(() => {
+        if (!start) return;
+        let raf, t0;
+        const tick = (t) => { if (!t0) t0 = t; const p = Math.min(1, (t - t0) / dur); setV(Math.floor(p * to)); if (p < 1) raf = requestAnimationFrame(tick); };
+        raf = requestAnimationFrame(tick);
+        return () => cancelAnimationFrame(raf);
+      }, [to, dur, start]);
+      return v;
+    };
+
+    const Stat = ({ num, suffix = "", label, start }) => {
+      const n = useCountUp(num, 1600, start);
+      return (
+        <div className="stat">
+          <div className="num mono-nums">{n.toLocaleString()}{suffix}</div>
+          <div className="cap">{label}</div>
+        </div>
+      );
+    };
+
+    const Trust = () => {
+      const ref = useRef(null);
+      const [inView, setInView] = useState(false);
+      useEffect(() => {
+        const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setInView(true); io.disconnect(); } }, { threshold: 0.3 });
+        if (ref.current) io.observe(ref.current);
+        return () => io.disconnect();
+      }, []);
+      return (
+        <section className="section trust" ref={ref}>
+          <div className="section-inner">
+            <div className="section-head">
+              <span className="eyebrow">Proven results</span>
+              <h2>Why businesses trust us</h2>
+              <p>Our results speak louder than any sales pitch.</p>
+            </div>
+            <div className="stats-row">
+              <Stat num={1312} suffix="%" label="Increase in monthly leads" start={inView} />
+              <Stat num={1125} suffix="%" label="Increase in conversions" start={inView} />
+              <Stat num={5} label="Days to page 1" start={inView} />
+              <Stat num={100} suffix="+" label="5-star Google reviews" start={inView} />
+            </div>
+
+            <div className="testimonial">
+              <div className="stars">★★★★★</div>
+              <q>Digital Movement have been amazing to work with. The team built me a great website and set up SEO and Google Ads and I started getting real leads not long after.</q>
+              <div className="who">Beth Sorensen</div>
+              <div className="role">Verified Google Review</div>
+              <div className="google-chip">
+                <svg viewBox="0 0 24 24" width="14" height="14"><path fill="#4285F4" d="M22 12.2c0-.7-.1-1.3-.2-2H12v3.8h5.6c-.2 1.3-1 2.4-2.1 3.1v2.6h3.4c2-1.8 3.1-4.5 3.1-7.5z"/><path fill="#34A853" d="M12 22c2.8 0 5.2-.9 6.9-2.5l-3.4-2.6c-.9.6-2.1 1-3.5 1-2.7 0-5-1.8-5.8-4.3H2.7v2.7C4.4 19.7 7.9 22 12 22z"/><path fill="#FBBC05" d="M6.2 13.6c-.2-.6-.3-1.2-.3-1.9s.1-1.3.3-1.9V7.1H2.7C2 8.5 1.6 10.2 1.6 12s.4 3.5 1.1 4.9l3.5-2.7z"/><path fill="#EA4335" d="M12 5.4c1.5 0 2.9.5 3.9 1.5l2.9-2.9C17.2 2.5 14.8 1.6 12 1.6 7.9 1.6 4.4 3.9 2.7 7.1l3.5 2.7C7 7.3 9.3 5.4 12 5.4z"/></svg>
+                5.0 Rating · Based on 100+ Reviews
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    };
+
+    // ---------- CTA ----------
+    const CTA = ({ tw, onBook }) => {
+      const waText = encodeURIComponent("Hi Digital Movement! I just filled out your form and wanted to chat sooner.");
+      const waLink = `https://wa.me/${tw.whatsappNumber.replace(/\D/g,'')}?text=${waText}`;
+      return (
+        <section className="section cta">
+          <div className="section-inner">
+            <div className="cta-inner">
+              <span className="eyebrow">Skip the queue</span>
+              <h2 style={{marginTop: 14}}>Don't want to wait?</h2>
+              <p>Book your free strategy call now or chat with us directly on WhatsApp.</p>
+              <div className="cta-row">
+                <button className="btn btn-primary" onClick={onBook}>
+                  <Icon name="calendar" /> Book your free call
+                </button>
+                <a className="btn btn-whatsapp" href={waLink} target="_blank" rel="noopener">
+                  <Icon name="whatsapp" /> Chat on WhatsApp
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    };
+
+    // ---------- Footer ----------
+    const Footer = () => (
+      <footer>
+        <Logo />
+        <div className="addr">
+          128 City Road, London, EC1V 2NX, United Kingdom<br />
+          0203 815 7992 · office@digitalmovement.uk
+        </div>
+        <div className="fnav">
+          <a href="#">SEO</a>
+          <a href="#">Google Ads</a>
+          <a href="#">Social Media</a>
+          <a href="#">Websites</a>
+          <a href="#">Contact</a>
+        </div>
+        <div className="copy">© 2026 Digital Movement. All rights reserved.</div>
+      </footer>
+    );
+
+    // ---------- Booking modal ----------
+    const BookingModal = ({ onClose }) => {
+      const today = new Date();
+      const days = Array.from({length: 6}, (_, i) => { const d = new Date(today); d.setDate(d.getDate() + i + 1); return d; });
+      const [day, setDay] = useState(0);
+      const [slot, setSlot] = useState(null);
+      const [sent, setSent] = useState(false);
+      const slots = ["09:00","10:30","12:00","14:00","15:30","17:00"];
+      const taken = [1, 3]; // pretend these are booked
+      const fmt = (d) => d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+      return (
+        <div className="modal-backdrop" onClick={onClose}>
+          <div className="modal" style={{position:'relative'}} onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={onClose}><Icon name="close" /></button>
+            {!sent ? (
+              <>
+                <span className="eyebrow">Free 30-min call</span>
+                <h3 style={{fontSize:24, fontWeight:800, letterSpacing:'-0.02em', marginTop:10, marginBottom:8}}>Book your strategy call</h3>
+                <p style={{color:'var(--text-2)', fontSize:14, marginBottom:20}}>All times London (GMT). Pick any free slot — we'll send a Google Meet invite instantly.</p>
+                <div style={{display:'flex', gap:8, overflowX:'auto', paddingBottom:4}}>
+                  {days.map((d, i) => (
+                    <button key={i} onClick={() => { setDay(i); setSlot(null); }}
+                      style={{flex:'0 0 auto', padding:'10px 14px', borderRadius:10, border:'1px solid var(--border)', background: day===i?'rgba(237,30,121,0.15)':'transparent', color: day===i?'#fff':'var(--text-2)', fontSize:12, fontWeight:600, letterSpacing:'0.04em', textTransform:'uppercase'}}>
+                      {fmt(d)}
+                    </button>
+                  ))}
+                </div>
+                <div className="slot-grid">
+                  {slots.map((s, i) => (
+                    <button key={s} className={"slot" + (slot === s ? " selected" : "")}
+                      disabled={taken.includes(i)}
+                      onClick={() => setSlot(s)}>{s}{taken.includes(i) && " · Taken"}</button>
+                  ))}
+                </div>
+                <button className="btn btn-primary" style={{width:'100%', marginTop:20, justifyContent:'center'}} disabled={!slot} onClick={() => setSent(true)}>
+                  Confirm {slot ? `${slot}, ${fmt(days[day])}` : "slot"} <Icon name="arrow" />
+                </button>
+              </>
+            ) : (
+              <div style={{textAlign:'center', padding:'20px 10px'}}>
+                <div className="check-halo" style={{margin:'0 auto 20px', width:72, height:72}}>
+                  <Icon name="check" style={{width:30,height:30}}/>
+                </div>
+                <h3 style={{fontSize:22, fontWeight:800, letterSpacing:'-0.02em', marginBottom:10}}>You're booked in</h3>
+                <p style={{color:'var(--text-2)', fontSize:14, marginBottom:20}}>
+                  <b style={{color:'#fff'}}>{slot}, {fmt(days[day])}</b><br/>
+                  Calendar invite on its way to your inbox.
+                </p>
+                <button className="btn btn-ghost" onClick={onClose} style={{justifyContent:'center'}}>Close</button>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    };
+
+    // ---------- Tweaks ----------
+    const Tweaks = ({ tw, setTw, onClose }) => {
+      const set = (k, v) => {
+        setTw(s => ({...s, [k]: v}));
+        try { window.parent.postMessage({type:'__edit_mode_set_keys', edits:{[k]:v}}, '*'); } catch(e){}
+      };
+      return (
+        <div className="tweaks">
+          <h4>Tweaks</h4>
+          <div className="row">
+            <label>Hero headline</label>
+            <div className="seg">
+              <button className={tw.heroMode==='split'?'on':''} onClick={()=>set('heroMode','split')}>Split</button>
+              <button className={tw.heroMode==='bold'?'on':''} onClick={()=>set('heroMode','bold')}>Bold</button>
+            </div>
+          </div>
+          <div className="row">
+            <label>Response window (hours)</label>
+            <input type="text" value={tw.etaHours} onChange={e=>set('etaHours', parseInt(e.target.value)||24)} />
+          </div>
+          <div className="row">
+            <label>Specialist name</label>
+            <input type="text" value={tw.ownerName} onChange={e=>set('ownerName', e.target.value)} />
+          </div>
+          <div className="row">
+            <label>Meanwhile marquee</label>
+            <div className="seg">
+              <button className={tw.showMarquee?'on':''} onClick={()=>set('showMarquee',true)}>On</button>
+              <button className={!tw.showMarquee?'on':''} onClick={()=>set('showMarquee',false)}>Off</button>
+            </div>
+          </div>
+          <div className="row">
+            <label>WhatsApp number</label>
+            <input type="text" value={tw.whatsappNumber} onChange={e=>set('whatsappNumber', e.target.value)} />
+          </div>
+        </div>
+      );
+    };
+
+    // ---------- App ----------
+    const App = () => {
+      const [tw, setTw] = useState(TWEAK_DEFAULTS);
+      const [modal, setModal] = useState(false);
+      const [tweaksOn, setTweaksOn] = useState(false);
+
+      useEffect(() => {
+        const onMsg = (e) => {
+          const d = e.data || {};
+          if (d.type === '__activate_edit_mode') setTweaksOn(true);
+          if (d.type === '__deactivate_edit_mode') setTweaksOn(false);
+        };
+        window.addEventListener('message', onMsg);
+        try { window.parent.postMessage({type:'__edit_mode_available'}, '*'); } catch(e){}
+        return () => window.removeEventListener('message', onMsg);
+      }, []);
+
+      return (
+        <div className="page" data-screen-label="01 Thank You">
+          <Nav />
+          <Hero tw={tw} onBook={() => setModal(true)} />
+          {tw.showMarquee && <Marquee />}
+          <Steps />
+          <Trust />
+          <CTA tw={tw} onBook={() => setModal(true)} />
+          <Footer />
+          {modal && <BookingModal onClose={() => setModal(false)} />}
+          {tweaksOn && <Tweaks tw={tw} setTw={setTw} />}
+        </div>
+      );
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
