@@ -25,7 +25,7 @@
   --radius-xl: 30px;
   --radius-lg: 22px;
   --header-height: 88px;
-  --shell: min(1080px, calc(100vw - 40px));
+  --shell: min(1480px, calc(100vw - 72px));
 }
 
 * {
@@ -234,7 +234,7 @@ button {
 }
 
 .hero-copy {
-  max-width: 760px;
+  max-width: 980px;
   margin: 0 auto;
   text-align: center;
 }
@@ -311,7 +311,7 @@ button {
 }
 
 .hero-actions .button {
-  width: min(100%, 430px);
+  width: min(100%, 540px);
   min-height: 82px;
   padding-inline: 34px;
   font-size: 1rem;
@@ -344,14 +344,16 @@ button {
 
 .section-shell--reviews::before {
   background:
-    radial-gradient(520px 360px at 50% 12%, rgba(241, 60, 100, 0.08), transparent 62%),
-    linear-gradient(180deg, rgba(30, 20, 44, 0.72), rgba(16, 10, 28, 0.46));
+    radial-gradient(620px 360px at 50% 10%, rgba(255, 255, 255, 0.04), transparent 68%),
+    radial-gradient(760px 460px at 14% 24%, rgba(241, 60, 100, 0.06), transparent 72%),
+    linear-gradient(180deg, #181d26 0%, #10141b 100%);
 }
 
 .section-shell--cases::before {
   background:
-    radial-gradient(700px 460px at 50% 12%, rgba(236, 23, 141, 0.08), transparent 60%),
-    linear-gradient(180deg, rgba(20, 13, 32, 0.68), rgba(16, 10, 28, 0.92));
+    radial-gradient(780px 460px at 50% 8%, rgba(236, 23, 141, 0.1), transparent 64%),
+    radial-gradient(920px 520px at 84% 12%, rgba(211, 50, 255, 0.08), transparent 68%),
+    linear-gradient(180deg, #211530 0%, #130d21 100%);
 }
 
 .section-shell--next::before {
@@ -361,12 +363,13 @@ button {
   pointer-events: none;
   z-index: -1;
   background:
-    radial-gradient(640px 320px at 50% 10%, rgba(255, 255, 255, 0.035), transparent 70%),
-    linear-gradient(180deg, rgba(16, 10, 28, 0.9), rgba(12, 8, 20, 0.98));
+    radial-gradient(620px 320px at 50% 10%, rgba(255, 255, 255, 0.03), transparent 72%),
+    radial-gradient(760px 420px at 86% 16%, rgba(241, 60, 100, 0.05), transparent 74%),
+    linear-gradient(180deg, #171c25 0%, #0f131a 100%);
 }
 
 .section-title {
-  max-width: 700px;
+  max-width: 860px;
   margin: 0 auto;
   text-align: center;
 }
@@ -394,9 +397,9 @@ button {
 }
 
 .review-feature {
-  max-width: 760px;
+  max-width: 1080px;
   margin: 38px auto 0;
-  padding: 34px 30px;
+  padding: 40px 44px;
   text-align: center;
 }
 
@@ -445,7 +448,7 @@ button {
 
 .review-feature blockquote {
   margin: 20px auto 0;
-  max-width: 28ch;
+  max-width: 34ch;
   font-size: clamp(1.2rem, 2vw, 1.65rem);
   line-height: 1.62;
   color: #ffffff;
@@ -476,7 +479,7 @@ button {
 }
 
 .case-study {
-  max-width: 760px;
+  max-width: 1120px;
   width: 100%;
   margin: 0 auto;
   padding: 54px 0;
@@ -489,7 +492,7 @@ button {
 
 .case-study h3 {
   margin: 18px auto 0;
-  max-width: 16ch;
+  max-width: 18ch;
   font-size: clamp(1.8rem, 3vw, 2.7rem);
   line-height: 1.08;
   letter-spacing: -0.04em;
@@ -518,7 +521,7 @@ button {
 
 .case-study__result {
   margin: 22px auto 0;
-  max-width: 34ch;
+  max-width: 42ch;
   color: #ffd5e6;
   font-size: 1.04rem;
   font-weight: 700;
@@ -527,7 +530,7 @@ button {
 
 .case-study__copy {
   margin: 16px auto 0;
-  max-width: 42ch;
+  max-width: 54ch;
   color: var(--text-muted);
   line-height: 1.82;
 }
@@ -535,7 +538,7 @@ button {
 .next-steps-flow {
   display: grid;
   gap: 0;
-  max-width: 760px;
+  max-width: 1080px;
   margin: 44px auto 0;
 }
 
@@ -573,7 +576,7 @@ button {
 
 .next-step p {
   margin: 16px auto 0;
-  max-width: 42ch;
+  max-width: 52ch;
   color: var(--text-muted);
   line-height: 1.82;
 }
@@ -582,7 +585,7 @@ button {
   display: grid;
   justify-items: center;
   gap: 8px;
-  max-width: 760px;
+  max-width: 980px;
   margin: 28px auto 0;
   padding: 20px 24px;
   border-radius: 999px;
@@ -605,7 +608,9 @@ button {
 .site-footer {
   padding: 34px 0 48px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(16, 10, 28, 0.86);
+  background:
+    radial-gradient(760px 380px at 50% 0%, rgba(211, 50, 255, 0.07), transparent 72%),
+    linear-gradient(180deg, #201430 0%, #130d21 100%);
 }
 
 .footer-inner {
