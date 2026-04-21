@@ -1,38 +1,7 @@
 export const NAV_LINKS = [
-  { href: '#next-steps', label: 'Next Steps' },
-  { href: '#proof', label: 'Reviews' },
-  { href: '#priority-call', label: 'Priority Call' },
-];
-
-export const HERO_CHIPS = [
-  '5.0 Google rating',
-  '102 reviews',
-  'Reply within 24 hours',
-];
-
-export const STEPS = [
-  {
-    phase: 'Today',
-    title: 'We review your site',
-    copy: 'Your website, rankings, and easiest quick wins are checked first.',
-  },
-  {
-    phase: 'Next',
-    title: 'We map the opportunity',
-    copy: 'We prioritise the strongest SEO, Google Ads, and landing page moves.',
-  },
-  {
-    phase: 'Then',
-    title: 'We talk through the plan',
-    copy: 'You get clear advice in plain English, not a padded sales pitch.',
-  },
-];
-
-export const STATS = [
-  { value: 1312, suffix: '%', label: 'Increase in monthly leads' },
-  { value: 1125, suffix: '%', label: 'Increase in conversions' },
-  { value: 5, suffix: '', label: 'Days to page 1' },
-  { value: 102, suffix: '', label: 'Google reviews' },
+  { href: '#reviews', label: 'Reviews' },
+  { href: '#case-studies', label: 'Case Studies' },
+  { href: '#footer', label: 'Contact' },
 ];
 
 export const REVIEW_SUMMARY = {
@@ -40,36 +9,34 @@ export const REVIEW_SUMMARY = {
   count: '102 reviews',
 };
 
-export const REVIEWS = [
+export const FEATURED_REVIEW = {
+  quote:
+    'Dean and the team built me a great website, set up SEO and Google Ads, and I started getting real leads not long after.',
+  name: 'Beth Sorensen',
+  role: 'Verified Google Review',
+};
+
+export const CASE_STUDIES = [
   {
-    quote:
-      'Great quality service, proactive and positive, easy to deal with, and outcomes as promised.',
-    name: 'Jessica Purcell',
-    role: 'Google Review',
+    eyebrow: 'Case Study 01',
+    title: 'Private clinic launch in a high-competition area',
+    result: 'Example result: 37 qualified enquiries in the first 6 weeks.',
+    copy:
+      'Placeholder copy for a short before-and-after story. This slot can later hold one image, one outcome, and one simple explanation of what changed.',
   },
   {
-    quote:
-      'A great company. Marty was incredibly professional, listened to my concerns, and made sure I felt heard.',
-    name: 'Tamara',
-    role: 'Google Review',
+    eyebrow: 'Case Study 02',
+    title: 'Landing-page rebuild for a premium service offer',
+    result: 'Example result: 3.2x higher conversion rate after the page relaunch.',
+    copy:
+      'Use this space for a concise summary of the challenge, the new page direction, and the commercial impact once the real project details are ready.',
   },
   {
-    quote:
-      'Punctual, organised, efficient - I could not recommend a better social media marketing agency.',
-    name: 'Fabienne M',
-    role: 'Google Review',
-  },
-  {
-    quote:
-      'Dean and the team built me a great website, set up SEO and Google Ads, and I started getting real leads not long after.',
-    name: 'Beth Sorensen',
-    role: 'Google Review',
-  },
-  {
-    quote:
-      'Stuart, Dean and the crew have been excellent with our website redesign, Google advertising, and SEO, with strong results quite quickly.',
-    name: 'Matthew Kang',
-    role: 'Google Review',
+    eyebrow: 'Case Study 03',
+    title: 'Paid search cleanup with stronger follow-up flow',
+    result: 'Example result: 41% lower cost per lead in the first month.',
+    copy:
+      'This placeholder is designed for one calm image, one strong result line, and one short paragraph so users can scan it without friction.',
   },
 ];
 

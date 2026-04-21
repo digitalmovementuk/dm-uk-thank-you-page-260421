@@ -1,23 +1,19 @@
-import { startTransition, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   AnimatePresence,
   LazyMotion,
-  animate,
   domAnimation,
   m,
-  useInView,
   useReducedMotion,
   useScroll,
   useTransform,
 } from 'framer-motion';
 import {
-  HERO_CHIPS,
+  CASE_STUDIES,
+  FEATURED_REVIEW,
   NAV_LINKS,
-  REVIEWS,
   REVIEW_SUMMARY,
   SLOT_GROUPS,
-  STATS,
-  STEPS,
 } from './content';
 
 const SECTION_REVEAL = {
@@ -195,7 +191,7 @@ function Header({ onOpenModal, progress }) {
           whileHover={{ y: -2 }}
           whileTap={{ scale: 0.98 }}
         >
-          Priority Call
+          Book Priority Call
         </m.button>
       </div>
     </header>
@@ -223,10 +219,6 @@ function Hero({ onOpenModal }) {
       />
       <div className="shell hero-inner">
         <m.div className="hero-copy" variants={SECTION_REVEAL} initial="hidden" animate="visible">
-          <div className="hero-kicker">
-            <span className="hero-kicker__dot" />
-            Request received
-          </div>
           <m.div
             className="hero-confirm"
             initial={{ scale: 0.86, opacity: 0 }}
@@ -235,20 +227,12 @@ function Hero({ onOpenModal }) {
           >
             <HeroCheckIcon />
           </m.div>
-          <h1>
-            Thank you. <span>We&apos;ve got your details.</span>
-          </h1>
+          <span className="eyebrow eyebrow--hero">Enquiry Received</span>
+          <h1>Thank You</h1>
           <p className="hero-lead">
-            One of our digital marketing specialists will review your website and come back to you
-            within 24 hours.
+            We&apos;ve got your details. If you want to move faster, choose the option below and
+            we&apos;ll get things moving straight away.
           </p>
-          <div className="hero-status">
-            {HERO_CHIPS.map((chip) => (
-              <span key={chip} className="hero-chip">
-                {chip}
-              </span>
-            ))}
-          </div>
           <div className="hero-actions">
             <m.button
               className="button button--primary"
@@ -258,7 +242,7 @@ function Hero({ onOpenModal }) {
               whileTap={{ scale: 0.98 }}
             >
               <CalendarIcon />
-              Book a priority call
+              Book Priority Call
             </m.button>
             <m.a
               className="button button--ghost"
@@ -267,245 +251,84 @@ function Hero({ onOpenModal }) {
               whileTap={{ scale: 0.98 }}
             >
               <PhoneIcon />
-              Call us now
+              Call Us Now
             </m.a>
           </div>
-          <m.div
-            className="hero-logo-pill"
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <img src="brand/logo-color-positive.svg" alt="Digital Movement" />
-          </m.div>
         </m.div>
       </div>
     </section>
   );
 }
 
-function NextStepsSection() {
+function GoogleReviewSection() {
   return (
-    <section id="next-steps" className="section-shell section-shell--soft">
+    <section id="reviews" className="section-shell section-shell--reviews">
       <div className="shell">
         <SectionTitle
-          eyebrow="What happens next"
-          title="Three simple steps"
-          copy="This part stays quick and clear, just like the prototype."
+          eyebrow="Google Reviews"
+          title="Simple proof, kept easy to scan"
+          copy="One strong client quote and the rating summary, so the page stays calm and clear."
         />
-        <div className="steps-grid">
-          {STEPS.map((step, index) => (
+        <m.article
+          className="review-feature"
+          variants={SECTION_REVEAL}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+        >
+          <div className="review-feature__summary">
+            <div className="review-feature__chip">
+              <GoogleIcon />
+              <span>Google Rating</span>
+            </div>
+            <div className="review-feature__meta">
+              <strong>{REVIEW_SUMMARY.rating}</strong>
+              <span>Based on {REVIEW_SUMMARY.count}</span>
+            </div>
+          </div>
+          <div className="review-feature__stars" aria-hidden="true">
+            *****
+          </div>
+          <blockquote>{FEATURED_REVIEW.quote}</blockquote>
+          <div className="review-feature__person">
+            <strong>{FEATURED_REVIEW.name}</strong>
+            <span>{FEATURED_REVIEW.role}</span>
+          </div>
+        </m.article>
+      </div>
+    </section>
+  );
+}
+
+function CaseStudiesSection() {
+  return (
+    <section id="case-studies" className="section-shell section-shell--cases">
+      <div className="shell">
+        <SectionTitle
+          eyebrow="Case Studies"
+          title="Three lean slots for real proof"
+          copy="These are placeholder case studies for now. Each one is set up for one image, one clear result, and one short story."
+        />
+        <div className="case-studies-stack">
+          {CASE_STUDIES.map((study, index) => (
             <m.article
-              key={step.title}
-              className="step-card"
+              key={study.title}
+              className="case-study"
               custom={index}
               variants={CARD_REVEAL}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.35 }}
+              viewport={{ once: true, amount: 0.25 }}
             >
-              <span className="step-phase">{step.phase}</span>
-              <div className="step-index">{String(index + 1).padStart(2, '0')}</div>
-              <h3>{step.title}</h3>
-              <p>{step.copy}</p>
+              <span className="eyebrow">{study.eyebrow}</span>
+              <h3>{study.title}</h3>
+              <div className="case-study__media">
+                <span>Image Placeholder</span>
+              </div>
+              <p className="case-study__result">{study.result}</p>
+              <p className="case-study__copy">{study.copy}</p>
             </m.article>
           ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function AnimatedStat({ value, suffix, label }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, amount: 0.55 });
-  const shouldReduceMotion = useReducedMotion();
-  const [displayValue, setDisplayValue] = useState(0);
-
-  useEffect(() => {
-    if (!inView) return undefined;
-    if (shouldReduceMotion) {
-      setDisplayValue(value);
-      return undefined;
-    }
-    const controls = animate(0, value, {
-      duration: 1.2,
-      ease: [0.22, 1, 0.36, 1],
-      onUpdate: (latest) => setDisplayValue(Math.round(latest)),
-    });
-    return () => controls.stop();
-  }, [inView, shouldReduceMotion, value]);
-
-  return (
-    <div ref={ref} className="stat-item">
-      <strong>
-        {displayValue.toLocaleString()}
-        {suffix}
-      </strong>
-      <span>{label}</span>
-    </div>
-  );
-}
-
-function ReviewsSlider() {
-  const shouldReduceMotion = useReducedMotion();
-  const [activeIndex, setActiveIndex] = useState(0);
-  const activeReview = REVIEWS[activeIndex];
-
-  useEffect(() => {
-    if (shouldReduceMotion) return undefined;
-    const timer = window.setInterval(() => {
-      startTransition(() => {
-        setActiveIndex((current) => (current + 1) % REVIEWS.length);
-      });
-    }, 4800);
-    return () => window.clearInterval(timer);
-  }, [shouldReduceMotion]);
-
-  const goTo = (index) => {
-    startTransition(() => setActiveIndex(index));
-  };
-
-  const goPrevious = () => {
-    startTransition(() => {
-      setActiveIndex((current) => (current - 1 + REVIEWS.length) % REVIEWS.length);
-    });
-  };
-
-  const goNext = () => {
-    startTransition(() => {
-      setActiveIndex((current) => (current + 1) % REVIEWS.length);
-    });
-  };
-
-  return (
-    <m.div
-      className="reviews-shell"
-      variants={SECTION_REVEAL}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.3 }}
-    >
-      <div className="reviews-summary">
-        <div className="reviews-summary__chip">
-          <GoogleIcon />
-          <span>Google Reviews</span>
-        </div>
-        <div className="reviews-summary__meta">
-          <strong>{REVIEW_SUMMARY.rating}</strong>
-          <span>Based on {REVIEW_SUMMARY.count}</span>
-        </div>
-      </div>
-
-      <div className="review-slider">
-        <button
-          className="review-arrow review-arrow--left"
-          type="button"
-          onClick={goPrevious}
-          aria-label="Previous review"
-        >
-          <ArrowIcon />
-        </button>
-
-        <div className="review-slider__viewport">
-          <AnimatePresence mode="wait">
-            <m.article
-              key={activeReview.name}
-              className="review-card"
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -18 }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <div className="review-stars" aria-hidden="true">
-                *****
-              </div>
-              <blockquote>{activeReview.quote}</blockquote>
-              <div className="review-meta">
-                <strong>{activeReview.name}</strong>
-                <span>{activeReview.role}</span>
-              </div>
-            </m.article>
-          </AnimatePresence>
-        </div>
-
-        <button
-          className="review-arrow"
-          type="button"
-          onClick={goNext}
-          aria-label="Next review"
-        >
-          <ArrowIcon />
-        </button>
-      </div>
-
-      <div className="review-dots" aria-label="Review navigation">
-        {REVIEWS.map((review, index) => (
-          <button
-            key={review.name}
-            className={index === activeIndex ? 'is-active' : ''}
-            type="button"
-            onClick={() => goTo(index)}
-            aria-label={`Show review ${index + 1}`}
-            aria-pressed={index === activeIndex}
-          />
-        ))}
-      </div>
-    </m.div>
-  );
-}
-
-function ProofSection() {
-  return (
-    <section id="proof" className="section-shell section-shell--gradient">
-      <div className="shell">
-        <SectionTitle
-          eyebrow="Proof"
-          title="Google reviews and real results"
-          copy="This section is shorter now, but still keeps the strongest proof visible."
-        />
-        <div className="stats-grid">
-          {STATS.map((stat) => (
-            <AnimatedStat key={stat.label} {...stat} />
-          ))}
-        </div>
-        <ReviewsSlider />
-      </div>
-    </section>
-  );
-}
-
-function PrioritySection({ onOpenModal }) {
-  const shouldReduceMotion = useReducedMotion();
-
-  return (
-    <section id="priority-call" className="section-shell section-shell--cta">
-      <div className="shell priority-shell">
-        <SectionTitle
-          eyebrow="Want to speak sooner?"
-          title="Book a priority call"
-          copy="Pick a slot or call the team directly."
-        />
-        <div className="priority-actions">
-          <m.button
-            className="button button--primary button--large"
-            type="button"
-            onClick={onOpenModal}
-            whileHover={shouldReduceMotion ? {} : { y: -4, scale: 1.015 }}
-            whileTap={{ scale: 0.985 }}
-          >
-            <CalendarIcon />
-            Choose a priority slot
-          </m.button>
-          <m.a
-            className="button button--ghost button--large"
-            href="tel:02038157992"
-            whileHover={shouldReduceMotion ? {} : { y: -4, scale: 1.015 }}
-            whileTap={{ scale: 0.985 }}
-          >
-            <PhoneIcon />
-            Call 0203 815 7992
-          </m.a>
         </div>
       </div>
     </section>
@@ -514,7 +337,7 @@ function PrioritySection({ onOpenModal }) {
 
 function Footer() {
   return (
-    <footer className="site-footer">
+    <footer className="site-footer" id="footer">
       <div className="shell footer-inner">
         <img className="footer-logo" src="brand/logo-mono-positive.svg" alt="Digital Movement" />
         <p>
@@ -541,7 +364,7 @@ function PriorityModal({ open, onClose }) {
   }, [onClose, open]);
 
   const chooseDay = (day) => {
-    startTransition(() => setSelectedDay(day));
+    setSelectedDay(day);
   };
 
   const bookSlot = (time) => {
@@ -642,9 +465,8 @@ export default function App() {
         <Header onOpenModal={() => setIsModalOpen(true)} progress={scrollYProgress} />
         <main>
           <Hero onOpenModal={() => setIsModalOpen(true)} />
-          <NextStepsSection />
-          <ProofSection />
-          <PrioritySection onOpenModal={() => setIsModalOpen(true)} />
+          <GoogleReviewSection />
+          <CaseStudiesSection />
         </main>
         <Footer />
         <PriorityModal open={isModalOpen} onClose={() => setIsModalOpen(false)} />
