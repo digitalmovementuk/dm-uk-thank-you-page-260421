@@ -966,6 +966,7 @@ export default function App() {
   const [isHeroPrimaryVisible, setIsHeroPrimaryVisible] = useState(true);
   const [isLastViewportVisible, setIsLastViewportVisible] = useState(false);
   const [isCaseStudiesVisible, setIsCaseStudiesVisible] = useState(false);
+  const [isNextStepsVisible, setIsNextStepsVisible] = useState(false);
   const [showHeroCelebration, setShowHeroCelebration] = useState(false);
   const heroRef = useRef(null);
   const primaryActionRef = useRef(null);
@@ -1061,6 +1062,30 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    const node = document.getElementById('next-steps');
+    if (!node) return undefined;
+
+    const syncNextStepsVisibility = () => {
+      const rect = node.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const next = rect.top <= viewportHeight + 120;
+
+      startTransition(() => {
+        setIsNextStepsVisible((current) => (current === next ? current : next));
+      });
+    };
+
+    syncNextStepsVisibility();
+    window.addEventListener('scroll', syncNextStepsVisibility, { passive: true });
+    window.addEventListener('resize', syncNextStepsVisibility);
+
+    return () => {
+      window.removeEventListener('scroll', syncNextStepsVisibility);
+      window.removeEventListener('resize', syncNextStepsVisibility);
+    };
+  }, []);
+
+  useEffect(() => {
     return () => {
       if (celebrationTimeoutRef.current) {
         clearTimeout(celebrationTimeoutRef.current);
@@ -1108,7 +1133,8 @@ export default function App() {
             showStickyPriority &&
             !isHeroPrimaryVisible &&
             !isLastViewportVisible &&
-            !isCaseStudiesVisible
+            !isCaseStudiesVisible &&
+            !isNextStepsVisible
           }
         />
       </div>

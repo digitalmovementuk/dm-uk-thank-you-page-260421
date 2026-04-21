@@ -34,6 +34,10 @@ async function readLockMetrics(page) {
   return page.evaluate(getLockMetrics);
 }
 
+async function readStickyPriorityVisible(page) {
+  return page.evaluate(() => Boolean(document.querySelector('.sticky-priority')));
+}
+
 async function humanWheel(page, deltas) {
   for (const delta of deltas) {
     await page.mouse.wheel(0, delta);
@@ -190,6 +194,14 @@ test.describe('Case study lock', () => {
       8,
     );
     expect(movedBackThroughCards).toBe(true);
+
+    await page.locator('#next-steps').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(320);
+    await expect.poll(() => readStickyPriorityVisible(page)).toBe(false);
+
+    await page.locator('footer.site-footer').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(320);
+    await expect.poll(() => readStickyPriorityVisible(page)).toBe(false);
   });
 
   test.describe('mobile', () => {
@@ -266,6 +278,14 @@ test.describe('Case study lock', () => {
         8,
       );
       expect(movedBackThroughCards).toBe(true);
+
+      await page.locator('#next-steps').scrollIntoViewIfNeeded();
+      await page.waitForTimeout(320);
+      await expect.poll(() => readStickyPriorityVisible(page)).toBe(false);
+
+      await page.locator('footer.site-footer').scrollIntoViewIfNeeded();
+      await page.waitForTimeout(320);
+      await expect.poll(() => readStickyPriorityVisible(page)).toBe(false);
     });
   });
 });
