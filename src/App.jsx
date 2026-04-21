@@ -733,14 +733,7 @@ function Footer() {
 
   return (
     <footer className="site-footer" id="footer">
-      <div className="shell">
-        <img
-          className="footer-prelogo"
-          src="brand/footer-cover-option-2hr.jpg"
-          alt="Digital Movement cover artwork"
-        />
-      </div>
-      <div className="shell footer-top">
+      <div className="shell footer-inner">
         <div className="footer-brand">
           <img className="footer-logo" src="brand/logo-mono-positive.svg" alt="Digital Movement" />
           <p className="footer-summary">
@@ -802,26 +795,26 @@ function Footer() {
             </div>
           </div>
         </div>
-      </div>
-      <div className="shell footer-bottom">
-        <p>
-          © {year} Digital Movement. This page is operated by Digital Movement. Privacy information
-          is available at{' '}
-          <a href={CONTACT_DETAILS.privacyHref} target="_blank" rel="noreferrer">
-            digitalmovement.uk/privacy-policy
-          </a>
-          .
-        </p>
-        <div className="footer-bottom-links">
-          <a href={CONTACT_DETAILS.websiteHref} target="_blank" rel="noreferrer">
-            digitalmovement.uk
-          </a>
-          <a href={CONTACT_DETAILS.instagramHref} target="_blank" rel="noreferrer">
-            Instagram
-          </a>
-          <a href={CONTACT_DETAILS.privacyHref} target="_blank" rel="noreferrer">
-            Privacy Policy
-          </a>
+        <div className="footer-bottom">
+          <p>
+            © {year} Digital Movement. This page is operated by Digital Movement. Privacy
+            information is available at{' '}
+            <a href={CONTACT_DETAILS.privacyHref} target="_blank" rel="noreferrer">
+              digitalmovement.uk/privacy-policy
+            </a>
+            .
+          </p>
+          <div className="footer-bottom-links">
+            <a href={CONTACT_DETAILS.websiteHref} target="_blank" rel="noreferrer">
+              digitalmovement.uk
+            </a>
+            <a href={CONTACT_DETAILS.instagramHref} target="_blank" rel="noreferrer">
+              Instagram
+            </a>
+            <a href={CONTACT_DETAILS.privacyHref} target="_blank" rel="noreferrer">
+              Privacy Policy
+            </a>
+          </div>
         </div>
       </div>
     </footer>
