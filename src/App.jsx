@@ -12,6 +12,7 @@ import {
   CASE_STUDIES,
   FEATURED_REVIEW,
   NAV_LINKS,
+  NEXT_STEPS,
   REVIEW_SUMMARY,
   SLOT_GROUPS,
 } from './content';
@@ -335,6 +336,47 @@ function CaseStudiesSection() {
   );
 }
 
+function NextStepsSection() {
+  return (
+    <section id="next-steps" className="section-shell section-shell--next">
+      <div className="shell">
+        <SectionTitle
+          eyebrow="Next Steps"
+          title="What happens from here"
+          copy="A simple process from review to launch, kept high-level so it is easy to follow."
+        />
+        <div className="next-steps-flow">
+          {NEXT_STEPS.map((step, index) => (
+            <m.article
+              key={step.number}
+              className="next-step"
+              custom={index}
+              variants={CARD_REVEAL}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.25 }}
+            >
+              <div className="next-step__number">{step.number}</div>
+              <h3>{step.title}</h3>
+              <p>{step.copy}</p>
+            </m.article>
+          ))}
+        </div>
+        <m.div
+          className="next-steps-note"
+          variants={SECTION_REVEAL}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+        >
+          <strong>No heavy workload on your side.</strong>
+          <span>We handle the build, setup, and rollout for you.</span>
+        </m.div>
+      </div>
+    </section>
+  );
+}
+
 function Footer() {
   return (
     <footer className="site-footer" id="footer">
@@ -467,6 +509,7 @@ export default function App() {
           <Hero onOpenModal={() => setIsModalOpen(true)} />
           <GoogleReviewSection />
           <CaseStudiesSection />
+          <NextStepsSection />
         </main>
         <Footer />
         <PriorityModal open={isModalOpen} onClose={() => setIsModalOpen(false)} />

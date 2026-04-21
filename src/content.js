@@ -40,6 +40,33 @@ export const CASE_STUDIES = [
   },
 ];
 
+export const NEXT_STEPS = [
+  {
+    number: '01',
+    title: 'Site And Market Audit',
+    copy:
+      'We review your website, local search demand, competitor positioning, and the clearest opportunities across Google Search and Maps.',
+  },
+  {
+    number: '02',
+    title: 'Strategy Call And Growth Plan',
+    copy:
+      'We speak with you directly, share the findings, and outline the offers, priorities, and first 6 months of weekly lead growth.',
+  },
+  {
+    number: '03',
+    title: 'SEO-Ready Website Delivery',
+    copy:
+      'We deliver your SEO-optimised website within the first 4 weeks, with no invoice raised before delivery and Google submission.',
+  },
+  {
+    number: '04',
+    title: 'First Website Leads',
+    copy:
+      'Once the site is live and building search traction, first website leads typically begin appearing from around month 3.',
+  },
+];
+
 export const SLOT_GROUPS = [
   {
     day: 'Monday',
