@@ -4,6 +4,7 @@ import {
   LazyMotion,
   domAnimation,
   m,
+  useMotionValue,
   useReducedMotion,
   useScroll,
   useSpring,
@@ -389,7 +390,7 @@ function StickyPriorityBar({ visible }) {
           initial={{ opacity: 0, y: 26 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 18 }}
-          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="sticky-priority__inner">
             <p>Need a faster start?</p>
@@ -466,14 +467,17 @@ function CaseStudySlide({ study, index, activeIndex }) {
         />
       </div>
       <div className="case-study-card__body">
+        <p className="case-study-card__person">{study.person}</p>
         <h3>{study.title}</h3>
         <blockquote className="case-study-card__quote">“{study.quote}”</blockquote>
-        <p className="case-study-card__person">{study.person}</p>
-        <div className="case-study-card__result">
-          <strong>{study.stat}</strong>
-          <span>{study.statLabel}</span>
-        </div>
         <p className="case-study-card__copy">{study.copy}</p>
+        <div className="case-study-card__result-panel">
+          <span className="case-study-card__result-kicker">Key metric</span>
+          <div className="case-study-card__result">
+            <strong>{study.stat}</strong>
+            <span>{study.statLabel}</span>
+          </div>
+        </div>
       </div>
     </article>
   );
@@ -514,44 +518,92 @@ function CaseStudiesSection() {
   const sliderViewportRef = useRef(null);
   const sliderTrackRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [slideStep, setSlideStep] = useState(0);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start start', 'end end'],
+  const [layoutMetrics, setLayoutMetrics] = useState({
+    slideStep: 0,
+    holdDistance: 220,
+    sectionHeight: 1320,
   });
-  const smoothProgress = useSpring(scrollYProgress, {
+  const [lockState, setLockState] = useState('before');
+  const sectionProgress = useMotionValue(0);
+  const smoothProgress = useSpring(sectionProgress, {
     stiffness: shouldReduceMotion ? 1000 : 130,
     damping: shouldReduceMotion ? 100 : 28,
     mass: 0.26,
   });
-  const maxTranslate = slideStep * (CASE_STUDIES.length - 1);
-  const sliderX = useTransform(smoothProgress, [0, 1], [0, -maxTranslate]);
+  const maxTranslate = layoutMetrics.slideStep * (CASE_STUDIES.length - 1);
+  const travelDistance = maxTranslate + layoutMetrics.holdDistance;
+  const travelCutoff = maxTranslate > 0 && travelDistance > 0 ? maxTranslate / travelDistance : 1;
+  const carouselProgress = useTransform(smoothProgress, (latest) => {
+    if (maxTranslate <= 0) {
+      return 0;
+    }
+
+    if (latest >= travelCutoff) {
+      return 1;
+    }
+
+    return latest / Math.max(travelCutoff, 0.0001);
+  });
+  const sliderX = useTransform(carouselProgress, (latest) => -maxTranslate * latest);
+
+  const syncActiveIndex = (progress) => {
+    const nextIndex = Math.min(
+      CASE_STUDIES.length - 1,
+      Math.round(progress * (CASE_STUDIES.length - 1)),
+    );
+
+    startTransition(() => {
+      setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
+    });
+  };
 
   useEffect(() => {
     if (shouldReduceMotion) {
       return undefined;
     }
 
-    const measureSlider = () => {
+    const measureLayout = () => {
       const track = sliderTrackRef.current;
       const firstSlide = track?.querySelector('.case-study-slider__slide');
-      if (!track || !firstSlide) {
+      if (!track || !firstSlide || !sliderViewportRef.current) {
         return;
       }
 
       const computed = window.getComputedStyle(track);
       const gap = parseFloat(computed.columnGap || computed.gap || '0');
       const nextStep = firstSlide.getBoundingClientRect().width + gap;
+      const headerOffset =
+        parseFloat(
+          window.getComputedStyle(document.documentElement).getPropertyValue('--header-height'),
+        ) || 0;
+      const viewportHeight = window.innerHeight;
+      const stickyHeight = Math.max(360, viewportHeight - headerOffset);
+      const nextHoldDistance = Math.max(180, Math.min(280, stickyHeight * 0.22));
+      const nextSectionHeight = Math.ceil(viewportHeight + nextStep * (CASE_STUDIES.length - 1) + nextHoldDistance);
 
       startTransition(() => {
-        setSlideStep((current) => (Math.abs(current - nextStep) < 1 ? current : nextStep));
+        setLayoutMetrics((current) => {
+          const isSameStep = Math.abs(current.slideStep - nextStep) < 1;
+          const isSameHold = Math.abs(current.holdDistance - nextHoldDistance) < 1;
+          const isSameHeight = Math.abs(current.sectionHeight - nextSectionHeight) < 2;
+
+          if (isSameStep && isSameHold && isSameHeight) {
+            return current;
+          }
+
+          return {
+            slideStep: nextStep,
+            holdDistance: nextHoldDistance,
+            sectionHeight: nextSectionHeight,
+          };
+        });
       });
     };
 
-    measureSlider();
+    measureLayout();
 
     const resizeObserver = new ResizeObserver(() => {
-      measureSlider();
+      measureLayout();
     });
 
     if (sliderViewportRef.current) {
@@ -563,11 +615,11 @@ function CaseStudiesSection() {
       resizeObserver.observe(firstSlide);
     }
 
-    window.addEventListener('resize', measureSlider);
+    window.addEventListener('resize', measureLayout);
 
     return () => {
       resizeObserver.disconnect();
-      window.removeEventListener('resize', measureSlider);
+      window.removeEventListener('resize', measureLayout);
     };
   }, [shouldReduceMotion]);
 
@@ -576,29 +628,105 @@ function CaseStudiesSection() {
       return undefined;
     }
 
-    const syncActiveIndex = (latest) => {
-      const nextIndex = Math.min(
-        CASE_STUDIES.length - 1,
-        Math.round(latest * (CASE_STUDIES.length - 1)),
-      );
+    let frameId = 0;
+
+    const syncSectionProgress = () => {
+      frameId = 0;
+
+      const section = sectionRef.current;
+      if (!section) {
+        return;
+      }
+
+      const headerOffset =
+        parseFloat(
+          window.getComputedStyle(document.documentElement).getPropertyValue('--header-height'),
+        ) || 0;
+      const viewportHeight = window.innerHeight;
+      const stickyHeight = Math.max(360, viewportHeight - headerOffset);
+      const scrollSpan = Math.max(section.offsetHeight - stickyHeight, 1);
+      const rect = section.getBoundingClientRect();
+      const nextProgress = Math.max(0, Math.min(1, (headerOffset - rect.top) / scrollSpan));
+
+      sectionProgress.set(nextProgress);
+    };
+
+    const queueSectionProgressSync = () => {
+      if (frameId) {
+        return;
+      }
+
+      frameId = window.requestAnimationFrame(syncSectionProgress);
+    };
+
+    queueSectionProgressSync();
+
+    const resizeObserver = new ResizeObserver(() => {
+      queueSectionProgressSync();
+    });
+
+    if (sectionRef.current) {
+      resizeObserver.observe(sectionRef.current);
+    }
+
+    window.addEventListener('scroll', queueSectionProgressSync, { passive: true });
+    window.addEventListener('resize', queueSectionProgressSync);
+
+    return () => {
+      if (frameId) {
+        window.cancelAnimationFrame(frameId);
+      }
+      resizeObserver.disconnect();
+      window.removeEventListener('scroll', queueSectionProgressSync);
+      window.removeEventListener('resize', queueSectionProgressSync);
+    };
+  }, [layoutMetrics.sectionHeight, sectionProgress, shouldReduceMotion]);
+
+  useEffect(() => {
+    if (shouldReduceMotion) {
+      return undefined;
+    }
+
+    const syncLockState = (latest) => {
+      let nextState = 'before';
+
+      if (latest >= 0.995) {
+        nextState = 'after';
+      } else if (latest > travelCutoff && maxTranslate > 0) {
+        nextState = 'hold';
+      } else if (latest > 0.015) {
+        nextState = 'sliding';
+      }
 
       startTransition(() => {
-        setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
+        setLockState((current) => (current === nextState ? current : nextState));
       });
     };
 
-    syncActiveIndex(scrollYProgress.get());
-    const unsubscribe = scrollYProgress.on('change', syncActiveIndex);
+    syncActiveIndex(carouselProgress.get());
+    syncLockState(sectionProgress.get());
 
-    return unsubscribe;
-  }, [scrollYProgress, shouldReduceMotion]);
+    const unsubscribeProgress = carouselProgress.on('change', syncActiveIndex);
+    const unsubscribeSection = sectionProgress.on('change', syncLockState);
+
+    return () => {
+      unsubscribeProgress();
+      unsubscribeSection();
+    };
+  }, [carouselProgress, maxTranslate, sectionProgress, shouldReduceMotion, travelCutoff]);
 
   if (shouldReduceMotion) {
     return <StaticCaseStudiesSection />;
   }
 
   return (
-    <section id="case-studies" ref={sectionRef} className="section-shell section-shell--cases case-study-lock">
+    <section
+      id="case-studies"
+      ref={sectionRef}
+      className="section-shell section-shell--cases case-study-lock"
+      data-lock-state={lockState}
+      style={{ '--case-study-section-height': `${layoutMetrics.sectionHeight}px` }}
+    >
       <div className="case-study-lock__sticky">
         <div className="shell case-study-lock__inner">
           <m.div
@@ -735,7 +863,19 @@ function Footer() {
     <footer className="site-footer" id="footer">
       <div className="shell footer-inner">
         <div className="footer-brand">
-          <img className="footer-logo" src="brand/logo-mono-positive.svg" alt="Digital Movement" />
+          <a
+            className="footer-logo-link"
+            href={CONTACT_DETAILS.websiteHref}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Visit digitalmovement.uk"
+          >
+            <img
+              className="footer-logo"
+              src="brand/footer-cover-option-2hr.jpg"
+              alt="Digital Movement"
+            />
+          </a>
           <p className="footer-summary">
             Performance-led SEO, web design, and digital growth for businesses across the UK.
           </p>
@@ -825,6 +965,7 @@ export default function App() {
   const [showStickyPriority, setShowStickyPriority] = useState(false);
   const [isHeroPrimaryVisible, setIsHeroPrimaryVisible] = useState(true);
   const [isLastViewportVisible, setIsLastViewportVisible] = useState(false);
+  const [isCaseStudiesVisible, setIsCaseStudiesVisible] = useState(false);
   const [showHeroCelebration, setShowHeroCelebration] = useState(false);
   const heroRef = useRef(null);
   const primaryActionRef = useRef(null);
@@ -890,6 +1031,36 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    const node = document.getElementById('case-studies');
+    if (!node) return undefined;
+
+    const syncCaseStudiesVisibility = () => {
+      const rect = node.getBoundingClientRect();
+      const headerHeight =
+        parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue('--header-height'),
+        ) || 0;
+      const viewportHeight = window.innerHeight;
+      const next =
+        rect.top <= viewportHeight + 480 &&
+        rect.bottom >= headerHeight + Math.min(160, viewportHeight * 0.18);
+
+      startTransition(() => {
+        setIsCaseStudiesVisible((current) => (current === next ? current : next));
+      });
+    };
+
+    syncCaseStudiesVisibility();
+    window.addEventListener('scroll', syncCaseStudiesVisibility, { passive: true });
+    window.addEventListener('resize', syncCaseStudiesVisibility);
+
+    return () => {
+      window.removeEventListener('scroll', syncCaseStudiesVisibility);
+      window.removeEventListener('resize', syncCaseStudiesVisibility);
+    };
+  }, []);
+
+  useEffect(() => {
     return () => {
       if (celebrationTimeoutRef.current) {
         clearTimeout(celebrationTimeoutRef.current);
@@ -933,7 +1104,12 @@ export default function App() {
         </main>
         <Footer />
         <StickyPriorityBar
-          visible={showStickyPriority && !isHeroPrimaryVisible && !isLastViewportVisible}
+          visible={
+            showStickyPriority &&
+            !isHeroPrimaryVisible &&
+            !isLastViewportVisible &&
+            !isCaseStudiesVisible
+          }
         />
       </div>
     </LazyMotion>
